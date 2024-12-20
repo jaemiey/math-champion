@@ -1,9 +1,12 @@
 export type Question = {
   id: number;
-  question: string;
+  question: {
+    en: string;
+    ms: string;
+  };
   options: string[];
   correctAnswer: string;
-  topic: "arithmetic" | "fractions" | "geometry";
+  topic: "arithmetic" | "fractions" | "geometry" | "measurement";
 };
 
 export type Score = {
@@ -16,4 +19,8 @@ export type GameState = {
   currentQuestion: number;
   score: number;
   isGameOver: boolean;
+  selectedTopic: string;
+  currentQuestions: Question[];
 };
+
+export type Language = "en" | "ms";
