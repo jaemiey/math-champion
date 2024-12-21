@@ -21,14 +21,15 @@ export const openaiService = {
           messages: [
             {
               role: "system",
-              content: "You are a math teacher creating multiple choice questions."
+              content: "You are a math teacher. Generate questions in valid JSON format only."
             },
             {
               role: "user",
-              content: `Generate 5 ${topic} questions in ${language} with 4 options each. Return as JSON array with format: [{id: number, question: {en: string, ms: string}, options: string[], correctAnswer: string, topic: string}]`
+              content: `Generate 5 ${topic} questions in ${language}. Return ONLY a JSON array with this exact format, no other text: [{id: number, question: string, options: string[], correctAnswer: string, topic: string}]`
             }
           ],
-          temperature: 0.7
+          temperature: 0.7,
+          response_format: { type: "json_object" }
         })
       });
 
@@ -40,8 +41,21 @@ export const openaiService = {
       }
 
       const data = await response.json();
-      console.log("Generated questions:", data);
-      return JSON.parse(data.choices[0].message.content);
+      console.log("Raw API response:", data);
+      
+      let questions;
+      try {
+        questions = JSON.parse(data.choices[0].message.content);
+      } catch (parseError) {
+        console.error("JSON parse error:", parseError);
+        throw new Error("Invalid response format from API");
+      }
+
+      if (!Array.isArray(questions)) {
+        throw new Error("Response is not an array of questions");
+      }
+
+      return questions;
     } catch (error) {
       console.error("Error generating questions:", error);
       throw new Error(error instanceof Error ? error.message : "Failed to generate questions");
