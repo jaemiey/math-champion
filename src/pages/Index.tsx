@@ -8,6 +8,7 @@ import { useToast } from "@/components/ui/use-toast";
 import { translations } from "@/config/languages";
 import { openaiService } from "@/services/openai";
 import { Score, GameState, Language, Question } from "@/types/game";
+import { playCorrectSound, playIncorrectSound, playGameOverSound } from "@/utils/sounds";
 
 const Index = () => {
   const [gameState, setGameState] = useState<GameState>({
@@ -86,6 +87,7 @@ const Index = () => {
     const isCorrect = answer === gameState.currentQuestions[gameState.currentQuestion].correctAnswer;
     
     if (isCorrect) {
+      playCorrectSound();
       toast({
         title: translations[language].correct,
         className: "bg-game-success text-white",
@@ -95,6 +97,7 @@ const Index = () => {
         score: prev.score + 20,
       }));
     } else {
+      playIncorrectSound();
       toast({
         title: translations[language].tryAgain,
         className: "bg-game-error text-white",
@@ -106,6 +109,7 @@ const Index = () => {
       setSelectedAnswer(undefined);
       
       if (gameState.currentQuestion === gameState.currentQuestions.length - 1) {
+        playGameOverSound();
         const newScore: Score = {
           playerName,
           score: isCorrect ? gameState.score + 20 : gameState.score,
