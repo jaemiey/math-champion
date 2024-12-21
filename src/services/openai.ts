@@ -21,11 +21,11 @@ export const openaiService = {
           messages: [
             {
               role: "system",
-              content: "You are a math teacher. Generate questions in JSON format following the exact structure specified."
+              content: "You are a math teacher. Generate an array of questions in JSON format. The response must be a direct array, not nested within an object."
             },
             {
               role: "user",
-              content: `Generate 5 ${topic} math questions and return them as a JSON array. Each question should have both English and Malay versions. The response must be in this exact JSON format:
+              content: `Generate 5 ${topic} math questions as a JSON array. Each question must have English and Malay versions. Return ONLY a JSON array in this exact format, with no wrapper object:
               [
                 {
                   "id": 1,
@@ -58,20 +58,22 @@ export const openaiService = {
       const data = await response.json();
       console.log("Raw API response:", data);
       
-      let questions;
       try {
         const content = data.choices[0].message.content;
-        questions = JSON.parse(content);
+        const questions = JSON.parse(content);
         
-        // Validate the response structure
+        // Validate that we received an array
         if (!Array.isArray(questions)) {
+          console.error("Response is not an array:", questions);
           throw new Error("Response is not an array");
         }
 
-        // Validate each question
-        questions.forEach((q: any) => {
-          if (!q.id || !q.question?.en || !q.question?.ms || !q.options || !q.correctAnswer || !q.topic) {
-            throw new Error("Invalid question format");
+        // Validate each question's structure
+        questions.forEach((q: any, index: number) => {
+          console.log(`Validating question ${index + 1}:`, q);
+          if (!q.id || !q.question?.en || !q.question?.ms || !Array.isArray(q.options) || !q.correctAnswer || !q.topic) {
+            console.error(`Invalid question format for question ${index + 1}:`, q);
+            throw new Error(`Invalid question format for question ${index + 1}`);
           }
         });
 
