@@ -57,11 +57,17 @@ const Index = () => {
 
     setIsGenerating(true);
     try {
+      console.log("Starting question generation...");
       const generatedQuestions = await openaiService.generateQuestions(
         gameState.selectedTopic,
         language
       );
 
+      if (!generatedQuestions || generatedQuestions.length === 0) {
+        throw new Error("No questions were generated");
+      }
+
+      console.log("Questions generated successfully:", generatedQuestions);
       setIsPlaying(true);
       setGameState({
         currentQuestion: 0,
@@ -71,10 +77,13 @@ const Index = () => {
         currentQuestions: generatedQuestions
       });
     } catch (error) {
+      console.error("Error in handleStartGame:", error);
       toast({
-        title: "Error generating questions",
+        title: language === 'en' ? "Error generating questions" : "Ralat menjana soalan",
+        description: error instanceof Error ? error.message : "Please try again",
         variant: "destructive",
       });
+      setIsGenerating(false);
     } finally {
       setIsGenerating(false);
     }
