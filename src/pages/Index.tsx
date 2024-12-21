@@ -8,6 +8,7 @@ import { useGameLogic } from "@/hooks/useGameLogic";
 const Index = () => {
   const {
     gameState,
+    setGameState,
     playerName,
     setPlayerName,
     isPlaying,
@@ -19,6 +20,7 @@ const Index = () => {
     setLanguage,
     isGenerating,
     showAPIInput,
+    setShowAPIInput,
     handleStartGame,
     handleAnswer
   } = useGameLogic();
