@@ -1,3 +1,5 @@
+import { Question } from "@/types/game";
+
 const generateQuestions = async (topic: string, language: string): Promise<Question[]> => {
   const systemPrompt = `You are a friendly math teacher creating questions for ${topic}. 
     Generate 10 multiple choice questions suitable for students aged 9-10. 
@@ -20,7 +22,7 @@ const generateQuestions = async (topic: string, language: string): Promise<Quest
       'Content-Type': 'application/json',
     },
     body: JSON.stringify({
-      model: "gpt-4o",
+      model: "gpt-4",
       messages: [
         {
           role: 'system',
@@ -28,12 +30,22 @@ const generateQuestions = async (topic: string, language: string): Promise<Quest
         }
       ],
       temperature: 0.7,
-      max_tokens: 2000
+      max_tokens: 2000,
+      response_format: { type: "json_object" }
     }),
   });
 
   const data = await response.json();
-  return JSON.parse(data.choices[0].message.content);
+  console.log('OpenAI Response:', data); // Debug log
+  
+  if (!response.ok) {
+    throw new Error(`API Error: ${data.error?.message || 'Unknown error'}`);
+  }
+
+  const questions = JSON.parse(data.choices[0].message.content);
+  console.log('Parsed Questions:', questions); // Debug log
+  
+  return questions;
 };
 
 export const openaiService = {
