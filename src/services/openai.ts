@@ -21,11 +21,11 @@ export const openaiService = {
           messages: [
             {
               role: "system",
-              content: "You are a math teacher. Generate questions in the exact format specified."
+              content: "You are a math teacher. Generate questions in JSON format following the exact structure specified."
             },
             {
               role: "user",
-              content: `Generate 5 ${topic} math questions. Each question should have both English and Malay versions. Return in this EXACT format:
+              content: `Generate 5 ${topic} math questions and return them as a JSON array. Each question should have both English and Malay versions. The response must be in this exact JSON format:
               [
                 {
                   "id": 1,
