@@ -33,7 +33,7 @@ const Index = () => {
       setScores(JSON.parse(savedScores));
     }
     
-    const apiKey = localStorage.getItem("PERPLEXITY_API_KEY");
+    const apiKey = localStorage.getItem("OPENAI_API_KEY");
     if (!apiKey) {
       setShowAPIInput(true);
     }
@@ -48,7 +48,7 @@ const Index = () => {
       return;
     }
 
-    const apiKey = localStorage.getItem("PERPLEXITY_API_KEY");
+    const apiKey = localStorage.getItem("OPENAI_API_KEY");
     if (!apiKey) {
       setShowAPIInput(true);
       return;

@@ -1,5 +1,3 @@
-import { Question } from "@/types/game";
-
 const generateQuestions = async (topic: string, language: string): Promise<Question[]> => {
   const systemPrompt = `You are a friendly math teacher creating questions for ${topic}. 
     Generate 10 multiple choice questions suitable for students aged 9-10. 
@@ -15,14 +13,14 @@ const generateQuestions = async (topic: string, language: string): Promise<Quest
       }
     ]`;
 
-  const response = await fetch('https://api.perplexity.ai/chat/completions', {
+  const response = await fetch('https://api.openai.com/v1/chat/completions', {
     method: 'POST',
     headers: {
-      'Authorization': `Bearer ${localStorage.getItem('PERPLEXITY_API_KEY')}`,
+      'Authorization': `Bearer ${localStorage.getItem('OPENAI_API_KEY')}`,
       'Content-Type': 'application/json',
     },
     body: JSON.stringify({
-      model: 'llama-3.1-sonar-small-128k-online',
+      model: "gpt-4o",
       messages: [
         {
           role: 'system',

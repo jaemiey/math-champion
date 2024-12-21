@@ -19,14 +19,14 @@ export const APIKeyInput = ({ language, onSubmit }: APIKeyInputProps) => {
       toast({
         title: language === "en" ? "API Key Required" : "Kunci API Diperlukan",
         description: language === "en" 
-          ? "Please enter your Perplexity API key" 
-          : "Sila masukkan kunci API Perplexity anda",
+          ? "Please enter your OpenAI API key" 
+          : "Sila masukkan kunci API OpenAI anda",
         variant: "destructive",
       });
       return;
     }
     
-    localStorage.setItem("PERPLEXITY_API_KEY", apiKey);
+    localStorage.setItem("OPENAI_API_KEY", apiKey);
     toast({
       title: language === "en" ? "API Key Saved" : "Kunci API Disimpan",
       description: language === "en" 
@@ -42,13 +42,13 @@ export const APIKeyInput = ({ language, onSubmit }: APIKeyInputProps) => {
         <div className="flex items-center gap-2 mb-2">
           <KeyRound className="w-6 h-6 text-purple-600 dark:text-purple-400" />
           <CardTitle>
-            {language === "en" ? "Enter Perplexity API Key" : "Masukkan Kunci API Perplexity"}
+            {language === "en" ? "Enter OpenAI API Key" : "Masukkan Kunci API OpenAI"}
           </CardTitle>
         </div>
         <CardDescription className="text-sm text-gray-600 dark:text-gray-400">
           {language === "en" 
-            ? "To enable AI-powered questions, please enter your Perplexity API key" 
-            : "Untuk mengaktifkan soalan AI, sila masukkan kunci API Perplexity anda"}
+            ? "To enable AI-powered questions, please enter your OpenAI API key" 
+            : "Untuk mengaktifkan soalan AI, sila masukkan kunci API OpenAI anda"}
         </CardDescription>
       </CardHeader>
       <CardContent className="space-y-4">
@@ -71,7 +71,7 @@ export const APIKeyInput = ({ language, onSubmit }: APIKeyInputProps) => {
             {language === "en" ? "Save Key" : "Simpan Kunci"}
           </Button>
           <a 
-            href="https://docs.perplexity.ai/docs/getting-started"
+            href="https://platform.openai.com/api-keys"
             target="_blank"
             rel="noopener noreferrer"
             className="flex items-center justify-center gap-1 text-sm text-purple-600 hover:text-purple-700 dark:text-purple-400 dark:hover:text-purple-300"
