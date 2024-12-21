@@ -3,6 +3,7 @@ import { QuestionCard } from "@/components/QuestionCard";
 import { GameStart } from "@/components/GameStart";
 import { GameOver } from "@/components/GameOver";
 import { AIQuizAgent } from "@/components/AIQuizAgent";
+import { APIKeyInput } from "@/components/APIKeyInput";
 import { useToast } from "@/components/ui/use-toast";
 import { translations } from "@/config/languages";
 import { openaiService } from "@/services/openai";
@@ -23,12 +24,18 @@ const Index = () => {
   const [selectedAnswer, setSelectedAnswer] = useState<string>();
   const [language, setLanguage] = useState<Language>("en");
   const [isGenerating, setIsGenerating] = useState(false);
+  const [showAPIInput, setShowAPIInput] = useState(false);
   const { toast } = useToast();
 
   useEffect(() => {
     const savedScores = localStorage.getItem("mathGameScores");
     if (savedScores) {
       setScores(JSON.parse(savedScores));
+    }
+    
+    const apiKey = localStorage.getItem("PERPLEXITY_API_KEY");
+    if (!apiKey) {
+      setShowAPIInput(true);
     }
   }, []);
 
@@ -38,6 +45,12 @@ const Index = () => {
         title: translations[language].enterName,
         variant: "destructive",
       });
+      return;
+    }
+
+    const apiKey = localStorage.getItem("PERPLEXITY_API_KEY");
+    if (!apiKey) {
+      setShowAPIInput(true);
       return;
     }
 
@@ -114,6 +127,17 @@ const Index = () => {
       }
     }, 1500);
   };
+
+  if (showAPIInput) {
+    return (
+      <div className="min-h-screen flex items-center justify-center bg-gradient-to-b from-game-primary/20 to-background p-4">
+        <APIKeyInput 
+          language={language} 
+          onSubmit={() => setShowAPIInput(false)} 
+        />
+      </div>
+    );
+  }
 
   if (!isPlaying) {
     return (
