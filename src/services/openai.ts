@@ -1,10 +1,10 @@
-import { Question } from "@/types/game";
+import { Question, Language } from "@/types/game";
 
 export const openaiService = {
-  generateQuestions: async (topic: string, language: string): Promise<Question[]> => {
+  generateQuestions: async (topic: string, language: Language): Promise<Question[]> => {
     const apiKey = localStorage.getItem("OPENAI_API_KEY");
     if (!apiKey) {
-      throw new Error("OpenAI API key not found");
+      throw new Error(language === 'en' ? "OpenAI API key not found" : "Kunci API OpenAI tidak dijumpai");
     }
 
     console.log("Generating questions for topic:", topic, "language:", language);
@@ -21,11 +21,23 @@ export const openaiService = {
           messages: [
             {
               role: "system",
-              content: "You are a math teacher. Generate questions in valid JSON format only."
+              content: "You are a math teacher. Generate questions in the exact format specified."
             },
             {
               role: "user",
-              content: `Generate 5 ${topic} questions in ${language}. Return ONLY a JSON array with this exact format, no other text: [{id: number, question: string, options: string[], correctAnswer: string, topic: string}]`
+              content: `Generate 5 ${topic} math questions. Each question should have both English and Malay versions. Return in this EXACT format:
+              [
+                {
+                  "id": 1,
+                  "question": {
+                    "en": "English question text",
+                    "ms": "Malay question text"
+                  },
+                  "options": ["option1", "option2", "option3", "option4"],
+                  "correctAnswer": "correct option",
+                  "topic": "${topic}"
+                }
+              ]`
             }
           ],
           temperature: 0.7,
@@ -37,7 +49,10 @@ export const openaiService = {
         console.error("OpenAI API error:", response.status, response.statusText);
         const errorData = await response.json();
         console.error("Error details:", errorData);
-        throw new Error(`API error: ${response.statusText}`);
+        throw new Error(language === 'en' ? 
+          `API error: ${response.statusText}` : 
+          `Ralat API: ${response.statusText}`
+        );
       }
 
       const data = await response.json();
@@ -45,20 +60,36 @@ export const openaiService = {
       
       let questions;
       try {
-        questions = JSON.parse(data.choices[0].message.content);
+        const content = data.choices[0].message.content;
+        questions = JSON.parse(content);
+        
+        // Validate the response structure
+        if (!Array.isArray(questions)) {
+          throw new Error("Response is not an array");
+        }
+
+        // Validate each question
+        questions.forEach((q: any) => {
+          if (!q.id || !q.question?.en || !q.question?.ms || !q.options || !q.correctAnswer || !q.topic) {
+            throw new Error("Invalid question format");
+          }
+        });
+
+        return questions;
       } catch (parseError) {
         console.error("JSON parse error:", parseError);
-        throw new Error("Invalid response format from API");
+        throw new Error(language === 'en' ? 
+          "Invalid response format from API" : 
+          "Format respons tidak sah dari API"
+        );
       }
-
-      if (!Array.isArray(questions)) {
-        throw new Error("Response is not an array of questions");
-      }
-
-      return questions;
     } catch (error) {
       console.error("Error generating questions:", error);
-      throw new Error(error instanceof Error ? error.message : "Failed to generate questions");
+      throw new Error(
+        language === 'en'
+          ? error instanceof Error ? error.message : "Failed to generate questions"
+          : error instanceof Error ? error.message : "Gagal menjana soalan"
+      );
     }
   }
 };
