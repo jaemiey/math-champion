@@ -3,6 +3,7 @@ import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { cn } from "@/lib/utils";
 import { Brain, CheckCircle2, XCircle, Calculator, Shapes, Ruler } from "lucide-react";
+import { FractionVisual } from "./FractionVisual";
 
 interface QuestionCardProps {
   question: Question;
@@ -25,6 +26,12 @@ const getTopicIcon = (topic: string) => {
   }
 };
 
+const shouldShowFractionVisual = (question: Question) => {
+  return question.topic === 'fractions' && 
+         question.question.en.toLowerCase().includes('fraction') &&
+         question.question.en.toLowerCase().includes('shaded');
+};
+
 export const QuestionCard = ({
   question,
   onAnswer,
@@ -41,6 +48,9 @@ export const QuestionCard = ({
             {question.question[language]}
           </CardTitle>
         </div>
+        {shouldShowFractionVisual(question) && (
+          <FractionVisual fraction={question.correctAnswer} />
+        )}
       </CardHeader>
       <CardContent className="grid grid-cols-2 gap-4 p-6">
         {question.options.map((option) => (
@@ -55,7 +65,7 @@ export const QuestionCard = ({
             )}
             disabled={isAnswered}
           >
-            <span className="relative z-10 flex items-center gap-2">
+            <span className="relative z-10 flex items-center justify-center gap-2">
               {option}
               {isAnswered && option === question.correctAnswer && (
                 <CheckCircle2 className="w-5 h-5 animate-scale-in" />
