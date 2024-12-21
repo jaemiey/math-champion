@@ -4,6 +4,7 @@ import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { translations } from "@/config/languages";
 import { Language } from "@/types/game";
 import { useState } from "react";
+import { QuestionGenerationLoader } from "./QuestionGenerationLoader";
 
 interface AIQuizAgentProps {
   language: Language;
@@ -42,10 +43,7 @@ export const AIQuizAgent = ({ language, onHintRequest, isGenerating }: AIQuizAge
       </CardHeader>
       <CardContent>
         {isGenerating ? (
-          <div className="flex items-center space-x-2 text-game-primary">
-            <Loader2 className="w-4 h-4 animate-spin" />
-            <span>{language === 'en' ? 'Generating questions...' : 'Menjana soalan...'}</span>
-          </div>
+          <QuestionGenerationLoader language={language} />
         ) : (
           <div className="space-y-4">
             {showMessage && (
